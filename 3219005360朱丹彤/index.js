@@ -392,18 +392,19 @@ window.addEventListener('load', function() {
                 li.innerHTML = `
             <span class="num1">${j+1}</span>
             <a href="javascript:;">${listDatas[i].songName[j]}</a>
-            <audio src="https://music.163.com/song/media/outer/url?id=${listDatas[i].songId[j]}"></audio>
+            <audio src="https://music.163.com/song/media/outer/url?id=${listDatas[i].songId[j]}" ></audio>
             `;
-                var audio = document.querySelector('audio')
-                li.onclick = function() {
-                        if (audio.paused) {
-                            audio.play();
-                        } else {
-                            audio.pause();
-                        }
 
-                    }
-                    // 插入元素
+                /*     var audio = document.querySelector('audio')
+                    ul.onclick = function(e) {
+                            if (e.target.children[2].paused) {
+                                e.target.children[2].play();
+                            } else {
+                                e.target.children[2].pause();
+                            }
+
+                        } */
+                // 插入元素
                 ul.appendChild(li);
 
                 if (j % 2 == 0) {
@@ -411,6 +412,7 @@ window.addEventListener('load', function() {
                 } else {
                     li.style.backgroundColor = '#f4f4f4'
                 }
+
             }
 
             // 创建元素
