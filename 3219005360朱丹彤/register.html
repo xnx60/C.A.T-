@@ -7,6 +7,7 @@
     <title>登录注册</title>
     <link rel="stylesheet" href="register.css">
     <script src="ajax.js"></script>
+    <script src="register.js"></script>
 </head>
 
 <body>
@@ -23,12 +24,12 @@
             <ul class="login-con">
                 <li>
                     <input type="text" placeholder="input your phone number" maxlength="11" id='phone'>
-                    <em>&nbsp;手机号码格式不正确</em>
+                    <em id="phoneE">&nbsp;手机号码格式不正确</em>
                 </li>
                 <li>
                     <input type="password" placeholder="input your password" id='psw'>
                     <span class="eye"></span>
-                    <em>&nbsp;密码错误</em>
+                    <em id="pswE">&nbsp;密码错误</em>
                 </li>
                 <li class="login-btn">
                     <input type="submit" id="" value="登录">
@@ -36,39 +37,9 @@
                 <li class="login-agree">
                     <input type="checkbox" id="">下次自动登录
                 </li>
-                <li class="login-change">
-                    短信登陆
-                </li>
             </ul>
         </div>
     </div>
-    <script>
-        /* 密码是否可见 */
-
-        // 获取元素
-        var eye = document.querySelector('.eye');
-        var phone = document.querySelector('#phone');
-        var psw = document.querySelector('#psw');
-        var btn = document.querySelector('.login-btn')
-
-        var flag = 0;
-        eye.onclick = function() {
-            if (flag == 0) {
-                psw.type = 'text';
-                eye.innerHTML = '';
-                flag = 1;
-            } else {
-                psw.type = 'password';
-                eye.innerHTML = ''
-                flag = 0;
-            }
-        }
-        btn.onclick = function() {
-            ajaxFunc('POST', 'http://musicapi.leanapp.cn/login/cellphone', function(datas) {
-                console.log(datas);
-            }, true, 'phone=19924681039&password=18823935429abcd');
-        }
-    </script>
 </body>
 
 </html>

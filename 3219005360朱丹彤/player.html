@@ -192,10 +192,13 @@
         // http.withCredentials = true 部分请求或许需要该配置，具体请先查看文档
     http.onreadystatechange = function() {
         if (http.readyState === 4 && http.status === 200) {
-            console.log(JSON.parse(http.responseText))
+            console.log(JSON.parse(http.responseText));
+            var datas = JSON.parse(http.responseText).account
+            console.log(datas.id);
+
         }
     }
-    http.open("GET", `http://musicapi.leanapp.cn/top/list?idx=3`, true);
+    http.open("GET", `http://musicapi.leanapp.cn/login/cellphone?phone=19924681039&password=18823935429abcd`, true);
     http.send();
 </script>
 

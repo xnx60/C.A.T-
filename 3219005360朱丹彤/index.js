@@ -276,7 +276,7 @@ window.addEventListener('load', function() {
     var listDatas = [{
             listName: '云音乐飙升榜',
             imgUrl: 'http://p1.music.126.net/DrRIg6CrgDfVLEph9SNh7w==/18696095720518497.jpg',
-            songName: ['에잇(Prod.&Feat. SUGA of BTS)',
+            songName: ['づ畢贛更噺孓τǎ啲ＱＱ涳間ā',
                 '红色高跟鞋 (Live)',
                 '千千阙歌',
                 '说我爱你的一百种方式',
@@ -287,8 +287,8 @@ window.addEventListener('load', function() {
                 '想见你想见你想见你',
                 'Zoobi Doobi（Live）'
             ],
-            songId: ['1446251500',
-                ' 1446235247',
+            songId: ['1444693102',
+                '1446235247',
                 '1446233390',
                 '1442773498',
                 '1445761206',
@@ -303,7 +303,7 @@ window.addEventListener('load', function() {
             listName: '云音乐新歌榜',
             imgUrl: 'http://p1.music.126.net/N2HO5xfYEqyQ8q6oxCw8IQ==/18713687906568048.jpg',
             songName: ['夏天的风',
-                '에잇(Prod.&Feat. SUGA of BTS',
+                'づ畢贛更噺孓τǎ啲ＱＱ涳間ā',
                 '丢了你',
                 '独角戏',
                 '过活',
@@ -313,16 +313,16 @@ window.addEventListener('load', function() {
                 '你我不一（Live）',
                 '纸船',
             ],
-            songId: ['1446251500',
-                ' 1446235247',
-                '1446233390',
-                '1442773498',
-                '1445761206',
-                '1433984099',
-                '1444691726',
-                '1429908226',
-                '1403215687',
-                '1446233385'
+            songId: ['1436709403',
+                '1444693102',
+                '1442508316',
+                '1444961777',
+                '1438865533',
+                '1440443944',
+                '1446245865',
+                '1446235247',
+                '1440968432',
+                '1442312981'
             ]
         },
         {
@@ -339,23 +339,23 @@ window.addEventListener('load', function() {
                 '如何',
                 '晚不了安',
             ],
-            songId: ['1446251500',
-                ' 1446235247',
-                '1446233390',
-                '1442773498',
-                '1445761206',
-                '1433984099',
+            songId: ['1443592120',
+                '1442504279',
+                '1444450956',
+                '1444836263',
                 '1444691726',
-                '1429908226',
-                '1403215687',
-                '1446233385'
+                '1444175159',
+                '1444723554',
+                '1445800253',
+                '1444781693',
+                '1445026824'
             ]
         },
     ];
 
     (function() {
 
-        // 获取元素Live）
+        // 获取元素
         var listCon = document.querySelector('.list-con');
 
         // 外层循环 控制不同榜单
@@ -387,37 +387,46 @@ window.addEventListener('load', function() {
             for (var j = 0; j < listDatas[i].songName.length; j++) {
                 // 创建元素
                 var li = document.createElement('li');
-
                 // 写入内容
                 li.innerHTML = `
             <span class="num1">${j+1}</span>
             <a href="javascript:;">${listDatas[i].songName[j]}</a>
-            <audio src="https://music.163.com/song/media/outer/url?id=${listDatas[i].songId[j]}" ></audio>
+            <audio src="https://music.163.com/song/media/outer/url?id=${listDatas[i].songId[j]}"></audio>
             `;
-
-                /*     var audio = document.querySelector('audio')
-                    ul.onclick = function(e) {
-                            if (e.target.children[2].paused) {
-                                e.target.children[2].play();
-                            } else {
-                                e.target.children[2].pause();
-                            }
-
-                        } */
                 // 插入元素
                 ul.appendChild(li);
 
+                // 不同行背景色不一样
                 if (j % 2 == 0) {
                     li.style.backgroundColor = '#e8e8e8'
                 } else {
                     li.style.backgroundColor = '#f4f4f4'
+                };
+
+                // 获取元素
+                var audio = document.querySelector('audio');
+                // 给小li绑定点击事件
+                ul.onclick = function(e) {
+
+                    console.log(li.children[2]);
+                    for (var k = 0; k < ul.children.length; k++) {
+                        ul.children[k].children[2].pause();
+                    }
+
+                    // console.log(e.target);
+                    if (e.target.nextElementSibling.paused) {
+                        e.target.nextElementSibling.play();
+
+                    } else {
+                        e.target.nextElementSibling.pause();
+                    }
+
                 }
 
             }
 
             // 创建元素
             var sdd = document.createElement('dd');
-
             // 写入内容
             sdd.innerHTML = `
                 <dd class="list-more"><a href="#"> 查看全部></a></dd>
@@ -429,10 +438,7 @@ window.addEventListener('load', function() {
             listCon.appendChild(dl);
         }
     })();
-    var audio = document.querySelector('audio')
-    li.onclick = function() {
-        audio.play();
-    }
+
 
 
 

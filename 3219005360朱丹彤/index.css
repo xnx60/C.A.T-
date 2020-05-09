@@ -247,7 +247,7 @@ a {
 
 .slideshow {
     height: 336px;
-    background: #5f426a;
+    background: #aabcc0;
     margin-top: 73px;
 }
 
@@ -303,12 +303,6 @@ a {
     top: 167px;
     left: 88px;
 }
-
-
-/* 左箭头 */
-
-
-/* 右箭头 */
 
 
 /* 下面小圆圈 */
@@ -838,7 +832,9 @@ a {
     content: '';
     display: block;
     float: right;
+    padding-right: 5px;
     font: 22px 'icomoon';
+    color: #737272;
 }
 
 .main .w .main-l .list .list-con dl .list-more a {

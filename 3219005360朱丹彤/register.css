@@ -131,8 +131,7 @@ a {
 /* 信息输入错误 */
 
 .sign-container .login-box .login-con li em {
-    display: block;
-    padding-left: 34px;
+    visibility: hidden;
     padding-top: 7px;
     text-align: left;
     font-style: normal;
@@ -147,7 +146,7 @@ a {
     width: 225px;
     background: linear-gradient(to right, #eaafc8, #654ea3, #653b94);
     background-size: 200%;
-    margin-top: -30px;
+    margin-top: 10px;
     padding-left: 5px;
     color: #ffffff;
     transition: all .5s;
