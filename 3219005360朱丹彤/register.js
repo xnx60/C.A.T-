@@ -55,10 +55,12 @@ window.addEventListener('load', function() {
         http.onreadystatechange = function() {
             if (http.readyState === 4 && http.status === 200) {
                 console.log(JSON.parse(http.responseText));
-                /*                 var datas = JSON.parse(http.responseText).account
-                                console.log(datas.id); */
+                var datas = JSON.parse(http.responseText).profile;
+                // console.log(datas);
+                // console.log(888);
                 if (phone.value == '19924681039' && psw.value == '18823935429abcd') {
-                    window.location.href = "index.html";
+                    // 实现页面跳转以及传递信息
+                    window.location.href = "index.html?" + datas.nickname + '|' + datas.avatarUrl;
                 } else {
                     alert('手机号或密码错误')
                 }

@@ -200,6 +200,7 @@ a {
 /* 登录 */
 
 .shortcut .shortcut-main .nav-r .log a {
+    display: block;
     padding-right: 0px;
     font-size: 13px;
     color: #ffffff;
@@ -207,6 +208,31 @@ a {
 
 .shortcut .shortcut-main .nav-r .log a:hover {
     color: #faebca;
+}
+
+
+/* 头像 */
+
+.shortcut .shortcut-main .nav-r .userPic {
+    display: none;
+    width: 82px;
+    height: 45px;
+    text-align: center;
+    line-height: 40px;
+    transform: translateX(-3px);
+}
+
+.shortcut .shortcut-main .nav-r .userPic img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 2px;
+    vertical-align: middle;
+}
+
+.shortcut .shortcut-main .nav-r .userPic span {
+    color: #faebca;
+    cursor: pointer;
 }
 
 

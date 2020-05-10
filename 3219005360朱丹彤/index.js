@@ -1,4 +1,50 @@
 window.addEventListener('load', function() {
+
+    /* 用户名显示 */
+
+    // 获取元素
+    var log = document.querySelector('.log');
+    var userPic = document.querySelector('.userPic');
+    // 获取?以及后面的字符串
+    var theme = window.location.search;
+    // 切除?
+    var userName = theme.slice(1);
+    // 分割字符串
+    var uArr = userName.split('|')
+
+    // alert(window.location.search)
+    if (theme == null || theme == '') {
+        log.style.display = 'block';
+        userPic.style.display = 'none';
+        // alert(theme);
+    } else {
+        log.style.display = 'none';
+        userPic.style.display = 'block'
+        userPic.children[1].innerHTML = uArr[0];
+        userPic.children[0].src = uArr[1];
+        // alert(theme);
+        // alert(theme.slice(1));
+    }
+    //  alert(theme);
+
+
+    // 发送ajax请求
+    userPic.children[1].onclick = function() {
+        console.log(userPic.children[1]);
+        let http = new XMLHttpRequest()
+            // http.withCredentials = true 部分请求或许需要该配置，具体请先查看文档
+        http.onreadystatechange = function() {
+            if (http.readyState === 4 && http.status === 200) {
+                console.log(JSON.parse(http.responseText));
+
+            }
+        }
+        http.open("GET", `http://musicapi.leanapp.cn/login/user/subcount`, true);
+        http.send();
+    }
+
+
+
     // 轮播图
     var slideshow = document.querySelector('.slideshow');
     var slideshow_con = document.querySelector('.slideshow-con')
