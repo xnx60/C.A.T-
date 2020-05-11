@@ -23,29 +23,29 @@ window.addEventListener('load', function() {
     };
 
 
-    // 文本框字聚焦消失
-    phone.addEventListener('focus', function() {
-        // console.log(phone.placeholder);
-        if (phone.placeholder == 'input your phone number') {
-            this.placeholder == '';
-        }
-    });
+    /*     // 文本框字聚焦消失
+        phone.addEventListener('focus', function() {
+            // console.log(phone.placeholder);
+            if (phone.placeholder == 'input your phone number') {
+                this.placeholder == '';
+            }
+        });
 
-    phone.addEventListener('blur', function() {
-        if (phone.placeholder == '') {
-            this.placeholder == 'input your phone number';
-        }
-    });
+        phone.addEventListener('blur', function() {
+            if (phone.placeholder == '') {
+                this.placeholder == 'input your phone number';
+            }
+        }); */
+    /* 
+        // 信息输入是否准确
+        phone.addEventListener('blur', function() {
+            // console.log(1);
 
-    // 信息输入是否准确
-    phone.addEventListener('blur', function() {
-        // console.log(1);
-
-        if (this.value != '' && this.value != '19924681039') {
-            // console.log(88);
-            phoneE.style.visibility = 'visible';
-        }
-    })
+            if (this.value != '' && this.value != '19924681039') {
+                // console.log(88);
+                phoneE.style.visibility = 'visible';
+            }
+        }) */
 
     btn.onclick = function() {
 
@@ -55,18 +55,21 @@ window.addEventListener('load', function() {
         http.onreadystatechange = function() {
             if (http.readyState === 4 && http.status === 200) {
                 console.log(JSON.parse(http.responseText));
+                // 获取code键对应的值
+                var code = JSON.parse(http.responseText).code;
+                // 获取用户有关信息
                 var datas = JSON.parse(http.responseText).profile;
-                // console.log(datas);
-                // console.log(888);
-                if (phone.value == '19924681039' && psw.value == '18823935429abcd') {
+                if (code == 200) {
                     // 实现页面跳转以及传递信息
-                    window.location.href = "index.html?" + datas.nickname + '|' + datas.avatarUrl;
+                    window.location.href = "index.html?" + datas.nickname + '|' + datas.avatarUrl + '|' + datas.userId;
                 } else {
-                    alert('手机号或密码错误')
+                    alert('用户名或密码错误');
+                    var pswE = document.querySelector('.pswE');
+                    pswE.innerHTML = JSON.parse(http.responseText).message;
                 }
             }
         }
-        http.open("GET", `http://musicapi.leanapp.cn/login/cellphone?phone=19924681039&password=18823935429abcd`, true);
+        http.open("GET", 'http://musicapi.leanapp.cn/login/cellphone?phone=' + phone.value + '&password=' + psw.value, true);
         http.send();
     }
 })

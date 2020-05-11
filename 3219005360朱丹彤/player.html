@@ -156,14 +156,21 @@
     <audio id="myMusic" src=" https://music.163.com/song/media/outer/url?id=1436709403.mp3"></audio>
 </body>
 <script>
+    // 获取元素
     var songName = document.querySelector('.songer-name');
     var singer = document.querySelector('.singer');
     var img = document.querySelector('img');
+
     var play = document.querySelector('.play');
+    var prvBtn = document.querySelector('.prv');
+    var nextBtn = document.querySelector('.next');
     var myMusic = document.querySelector('#myMusic');
+
     var volume = document.querySelector('.volume');
     var volumeBar = document.querySelector('.volumebar');
     var volumeArc = document.querySelector('.volumearc');
+
+    // 播放图标的改变
     var flag = true;
     play.onclick = function() {
         if (flag) {
@@ -179,27 +186,52 @@
 
     // 歌曲数据
     var musicDatas = [{
+        songName: '夏天的风',
+        singer: '火羊瞌睡了',
+        songerId: 1436709403
+    }, {
+        songName: '红色高跟鞋',
+        singer: '韩雪 / 刘敏涛 / 万茜',
+        songerId: 1446235247
+    }]
+    console.log(songName.innerHTML);
 
-        }]
-        // 切换歌曲
+
+    // 切换歌曲
     function changeSong(i) {
-        songName.innerHTML = musicData[i].songerName;
-        singer.innerHTML = musicData[i].singer;
-
+        songName.innerHTML = musicDatas[i].songerName;
+        singer.innerHTML = musicDatas[i].singer;
+        myMusic.src = " https://music.163.com/song/media/outer/url?id='+musicDatas[i].songerId+'.mp3"
+    }
+    changeSong(0);
+    prvBtn.onclick = function() {
+        i = i - 1 < 0 ? musicDatas.length - 1 : i - 1;
+        changeSong(i)
+    }
+    nextBtn.onclick = function() {
+        i = i + 1 > musicDatas.length - 1 ? 0 : i + 1;
+        changeSong(i)
+    }
+    myMusic.durationchange = function() {
+        changeSong(i);
     }
 
-    let http = new XMLHttpRequest()
-        // http.withCredentials = true 部分请求或许需要该配置，具体请先查看文档
-    http.onreadystatechange = function() {
-        if (http.readyState === 4 && http.status === 200) {
-            console.log(JSON.parse(http.responseText));
-            var datas = JSON.parse(http.responseText).account
-            console.log(datas.id);
+    /*     let http = new XMLHttpRequest()
+            // http.withCredentials = true 部分请求或许需要该配置，具体请先查看文档
+        http.onreadystatechange = function() {
+            if (http.readyState === 4 && http.status === 200) {
+                console.log(JSON.parse(http.responseText));
+                //var datas = JSON.parse(http.responseText).account
+                //console.log(datas.id);
+                var code = JSON.parse(http.responseText).code;
+                // 获取用户有关信息
+                var datas = JSON.parse(http.responseText).profile;
+                console.log(datas.userId);
 
+            }
         }
-    }
-    http.open("GET", `http://musicapi.leanapp.cn/login/user/subcount`, true);
-    http.send();
+        http.open("GET", `http://musicapi.leanapp.cn/login/cellphone?phone=19924681039&password=18823935429abcd`, true);
+        http.send(); */
 </script>
 
 </html>

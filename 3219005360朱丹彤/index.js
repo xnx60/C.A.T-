@@ -1,5 +1,14 @@
 window.addEventListener('load', function() {
 
+    /* 搜索框 */
+    var search = document.querySelector('input');
+    search.onfocus = function() {
+        search.placeholder = '';
+    }
+    search.onblur = function() {
+        search.placeholder = '音乐/视频/电台/用户';
+    }
+
     /* 用户名显示 */
 
     // 获取元素
@@ -10,7 +19,9 @@ window.addEventListener('load', function() {
     // 切除?
     var userName = theme.slice(1);
     // 分割字符串
-    var uArr = userName.split('|')
+    var uArr = userName.split('|');
+    // console.log(uArr[2]);
+
 
     // alert(window.location.search)
     if (theme == null || theme == '') {
@@ -39,13 +50,13 @@ window.addEventListener('load', function() {
 
             }
         }
-        http.open("GET", `http://musicapi.leanapp.cn/login/user/subcount`, true);
+        http.open("GET", 'http://musicapi.leanapp.cn/login/status', true);
         http.send();
     }
 
 
 
-    // 轮播图
+    /* 轮播图 */
     var slideshow = document.querySelector('.slideshow');
     var slideshow_con = document.querySelector('.slideshow-con')
     var ul = slideshow.querySelector('.slide-pic');
@@ -158,14 +169,6 @@ window.addEventListener('load', function() {
 
     })
 
-    /* 搜索框 */
-    var search = document.querySelector('input');
-    search.onfocus = function() {
-        search.placeholder = '';
-    }
-    search.onblur = function() {
-        search.placeholder = '音乐/视频/电台/用户';
-    }
 
     /* js动态写入热门推荐模块 */
 
