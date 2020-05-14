@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>播放器</title>
+    <script src="ajax.js"></script>
 </head>
 <style>
     /* 字体图标 */
@@ -69,9 +70,14 @@
     .myplayer .btns div {
         margin-bottom: 20px;
         cursor: pointer;
+        transition: .3s;
     }
     
-    .myplayer .play {
+    .myplayer .btns div:hover {
+        color: #6f56bf;
+    }
+    
+    .myplayer a .play {
         position: absolute;
         top: 288px;
         right: 25px;
@@ -88,9 +94,13 @@
     }
     
     .myplayer .song-name {
+        width: 250px;
         margin-bottom: 7px;
         font-weight: 700;
         color: #6e7e9b;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     /* 控制音量 */
     
@@ -133,16 +143,18 @@
 
 <body>
     <div class="myplayer">
-        <div class="pic"><img src="images/player1.jpg" alt=""></div>
+        <div class="pic"><img></div>
         <div class="btns">
             <div class="like">❤</div>
             <div class="share"></div>
             <div class="prv"></div>
             <div class="next"></div>
         </div>
-        <div class="play"></div>
-        <h4 class="song-name">夏天的风</h4>
-        <h4 class="singer">火羊瞌睡了</h4>
+        <a href="javascript:;" title="播放">
+            <div class="play"></div>
+        </a>
+        <h4 class="song-name"></h4>
+        <h4 class="singer"></h4>
         <!-- 控制音量 -->
         <div class="volume">
             <span class="vol-btn"></span>
@@ -153,67 +165,93 @@
             </div>
         </div>
     </div>
-    <audio id="myMusic" src=" https://music.163.com/song/media/outer/url?id=1436709403.mp3"></audio>
+    <audio id="myMusic"></audio>
 </body>
 <script>
     // 获取元素
-    var songName = document.querySelector('.songer-name');
-    var singer = document.querySelector('.singer');
-    var img = document.querySelector('img');
+    var songName = document.querySelector('.song-name'); // 歌名
+    var singer = document.querySelector('.singer'); // 歌手
+    var img = document.querySelector('img'); // 图片
 
-    var play = document.querySelector('.play');
-    var prvBtn = document.querySelector('.prv');
-    var nextBtn = document.querySelector('.next');
-    var myMusic = document.querySelector('#myMusic');
+    var play = document.querySelector('.play'); // 播放按钮
+    var a = document.querySelector('a'); // 播放按钮鼠标移上去的文字提示
+    var prvBtn = document.querySelector('.prv'); // 上一首按钮
+    var nextBtn = document.querySelector('.next'); // 下一首按钮
+    var myMusic = document.querySelector('#myMusic'); // audio标签
+
+    var like = document.querySelector('.like'); // 获取收藏标签
 
     var volume = document.querySelector('.volume');
     var volumeBar = document.querySelector('.volumebar');
     var volumeArc = document.querySelector('.volumearc');
 
-    // 播放图标的改变
-    var flag = true;
+    var i = 800; // 定义歌曲
+    var flag = true; // 多次点击事件
+
+    // 首次进入页面第一首歌
+    getMusic(800);
+
+    /* 收藏标签点击事件 */
+    like.onclick = function() {
+        if (flag) {
+            this.style.color = '#ff0000';
+            flag = false;
+        } else {
+            this.style.color = '#acb8cc';
+            flag = true;
+            // 恢复鼠标经过样式
+            like.onmouseover = function() {
+                this.style.color = '#6f56bf'
+            }
+        }
+    }
+
+    /* 播放图标的改变以及歌曲播放 */
     play.onclick = function() {
         if (flag) {
             myMusic.play();
             play.innerHTML = '';
+            a.title = '暂停';
             flag = false;
         } else {
             myMusic.pause();
             play.innerHTML = '';
+            a.title = '播放';
             flag = true;
         }
     }
 
-    // 歌曲数据
-    var musicDatas = [{
-        songName: '夏天的风',
-        singer: '火羊瞌睡了',
-        songerId: 1436709403
-    }, {
-        songName: '红色高跟鞋',
-        singer: '韩雪 / 刘敏涛 / 万茜',
-        songerId: 1446235247
-    }]
-    console.log(songName.innerHTML);
-
-
-    // 切换歌曲
-    function changeSong(i) {
-        songName.innerHTML = musicDatas[i].songerName;
-        singer.innerHTML = musicDatas[i].singer;
-        myMusic.src = " https://music.163.com/song/media/outer/url?id='+musicDatas[i].songerId+'.mp3"
-    }
-    changeSong(0);
-    prvBtn.onclick = function() {
-        i = i - 1 < 0 ? musicDatas.length - 1 : i - 1;
-        changeSong(i)
-    }
+    /* 歌曲切换 */
+    // 下一首
     nextBtn.onclick = function() {
-        i = i + 1 > musicDatas.length - 1 ? 0 : i + 1;
-        changeSong(i)
+            i = i + 1 > jsonObj.playlist.tracks.length - 1 ? 800 : i + 1;
+            getMusic(i);
+        }
+        // 上一首
+    prvBtn.onclick = function() {
+        i = i - 1 < 800 ? jsonObj.playlist.tracks.length - 1 : i - 1;
+        getMusic(i);
     }
-    myMusic.durationchange = function() {
-        changeSong(i);
+
+    /* 获取音乐 */
+    function getMusic(i) {
+        ajaxFunc('get', "http://musicapi.leanapp.cn/playlist/detail", function(response) {
+            jsonObj = JSON.parse(response);
+            songObj = jsonObj.playlist.tracks[i];
+
+            songName.innerHTML = songObj.name;
+            singer.innerHTML = songObj.ar[0].name;
+            img.src = songObj.al.picUrl;
+            myMusic.src = "https://music.163.com/song/media/outer/url?id=" + songObj.id + ".mp3"
+
+            // 让下一首歌曲状态（是否播放）与上一首一致
+            if (flag) {
+                myMusic.parse()
+            } else {
+                myMusic.play()
+            }
+
+        }, true, "id=24381616")
     }
 
     /*     let http = new XMLHttpRequest()

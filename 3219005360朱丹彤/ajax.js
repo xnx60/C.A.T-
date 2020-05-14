@@ -23,10 +23,8 @@ function ajaxFunc(method, url, callback, flag, data) {
         xhr.send(data);
     }
     xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                callback(xhr.responseText);
-            }
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            callback(xhr.responseText);
         }
-    };
-}
+    }
+};

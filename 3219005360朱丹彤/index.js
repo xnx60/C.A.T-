@@ -40,8 +40,8 @@ window.addEventListener('load', function() {
 
 
     // 发送ajax请求
-    userPic.children[1].onclick = function() {
-        console.log(userPic.children[1]);
+
+    /*     console.log(userPic.children[1]);
         let http = new XMLHttpRequest()
             // http.withCredentials = true 部分请求或许需要该配置，具体请先查看文档
         http.onreadystatechange = function() {
@@ -50,9 +50,9 @@ window.addEventListener('load', function() {
 
             }
         }
-        http.open("GET", 'http://musicapi.leanapp.cn/login/status', true);
-        http.send();
-    }
+        http.open("GET", 'http://musicapi.leanapp.cn/playlist/catlist', true);
+        http.send(); */
+
 
 
 
@@ -228,6 +228,8 @@ window.addEventListener('load', function() {
             singerName: 'Apink'
         }
     ];
+    console.log(newDatas);
+
 
     // 获取元素
     var newSlide = document.querySelector('.new-slide');
@@ -238,7 +240,7 @@ window.addEventListener('load', function() {
     for (var i = 0; i < newDatas.length; i++) {
         var newCon = `
             <div class="new-pic">
-                <a href="#"><img src="images/new${i+1}.jpg" alt=""></a>
+                <a href="#"><img src="http://p2.music.126.net/j1hivOS4I4ZKjODGF8zaIw==/109951164983520575.jpg" alt=""></a>
             </div>
             <p> <a href="#">${newDatas[i].songName }</a></p>
             <span><a href="#"> ${newDatas[i]['singerName']}</a></span>                            
@@ -298,6 +300,8 @@ window.addEventListener('load', function() {
             id: '独立DJ，CRI环球旅游广播特邀DJ'
         },
     ];
+    console.log(auchorDatas);
+
 
     // 获取元素
     var anchorCon = document.querySelector('.anchor-con');
@@ -321,138 +325,87 @@ window.addEventListener('load', function() {
 
     /* js动态写入榜单模块 */
 
-    // 模拟数据
-    var listDatas = [{
-            listName: '云音乐飙升榜',
-            imgUrl: 'http://p1.music.126.net/DrRIg6CrgDfVLEph9SNh7w==/18696095720518497.jpg',
-            songName: ['づ畢贛更噺孓τǎ啲ＱＱ涳間ā',
-                '红色高跟鞋 (Live)',
-                '千千阙歌',
-                '说我爱你的一百种方式',
-                '雨爱',
-                '有一件美好的事情将要发生',
-                '夏日终极浪漫',
-                '月牙湾（Live）',
-                '想见你想见你想见你',
-                'Zoobi Doobi（Live）'
-            ],
-            songId: ['1444693102',
-                '1446235247',
-                '1446233390',
-                '1442773498',
-                '1445761206',
-                '1433984099',
-                '1444691726',
-                '1429908226',
-                '1403215687',
-                '1446233385'
-            ]
-        },
-        {
-            listName: '云音乐新歌榜',
-            imgUrl: 'http://p1.music.126.net/N2HO5xfYEqyQ8q6oxCw8IQ==/18713687906568048.jpg',
-            songName: ['夏天的风',
-                'づ畢贛更噺孓τǎ啲ＱＱ涳間ā',
-                '丢了你',
-                '独角戏',
-                '过活',
-                '一千零一次我爱你',
-                '暗示',
-                '红色高跟鞋（Live）',
-                '你我不一（Live）',
-                '纸船',
-            ],
-            songId: ['1436709403',
-                '1444693102',
-                '1442508316',
-                '1444961777',
-                '1438865533',
-                '1440443944',
-                '1446245865',
-                '1446235247',
-                '1440968432',
-                '1442312981'
-            ]
-        },
-        {
-            listName: '网易云原创歌曲榜',
-            imgUrl: 'http://p1.music.126.net/sBzD11nforcuh1jdLSgX7g==/18740076185638788.jpg',
-            songName: ['淡 (Live)',
-                '黑夜',
-                '千樱花旅馆',
-                '奇妙世界',
-                '夏日终极浪漫',
-                '拜拜，心事备忘录',
-                '提到了你',
-                '月牙湾（Live）',
-                '如何',
-                '晚不了安',
-            ],
-            songId: ['1443592120',
-                '1442504279',
-                '1444450956',
-                '1444836263',
-                '1444691726',
-                '1444175159',
-                '1444723554',
-                '1445800253',
-                '1444781693',
-                '1445026824'
-            ]
-        },
-    ];
+    // 创建数组存放榜单数据
+    var listArr = [];
 
-    (function() {
+    // 发送ajax请求
+    ajaxFunc('Get', "http://musicapi.leanapp.cn/top/list", function(response) {
+        jsonObj = JSON.parse(response);
+        // console.log(jsonObj);
+        var listObj1 = jsonObj.playlist;
+        listArr.push(listObj1)
+        return listObj;
+    }, true, 'idx=3')
+    ajaxFunc('Get', "http://musicapi.leanapp.cn/top/list", function(response) {
+        jsonObj = JSON.parse(response);
+        // console.log(jsonObj);
+        var listObj2 = jsonObj.playlist;
+        listArr.push(listObj2)
+        return listObj;
+    }, true, 'idx=0')
+    ajaxFunc('Get', "http://musicapi.leanapp.cn/top/list", function(response) {
+        jsonObj = JSON.parse(response);
+        // console.log(jsonObj);
+        var listObj3 = jsonObj.playlist;
+        listArr.push(listObj3)
+        return listObj;
+    }, true, 'idx=2')
+    console.log(listArr);
+    console.log(listArr.length);
 
-        // 获取元素
-        var listCon = document.querySelector('.list-con');
 
-        // 外层循环 控制不同榜单
-        for (var i = 0; i < listDatas.length; i++) {
 
+    // 获取元素
+    var listCon = document.querySelector('.list-con');
+
+    // 外层循环 控制不同榜单
+
+    for (var i = 0; i < 3; i++) {
+        alert(888)
+
+        // 创建元素
+        var dl = document.createElement('dl');
+        var dt = document.createElement('dt');
+        var dd = document.createElement('dd');
+        var ul = document.createElement('ul');
+
+        // 插入元素
+        dl.appendChild(dt);
+        dl.appendChild(dd);
+        dd.appendChild(ul);
+
+        // 内容写入
+        dt.innerHTML = `
+                <dt class="item-top">
+                    <div class="top-pic"><img src="${listArr[i].coverImgUrl}" alt=""></div>
+                    <h4><a href="#">${listArr[i].name}</a> </h4>
+                    <div class="list-btn">
+                        <a href="#" class="list-play"></a>&nbsp;&nbsp;
+                        <a href="#" class="list-col"></a>
+                    </div>
+                </dt>`;
+
+        // 内层循环 控制榜单列表歌曲    
+        for (var j = 0; j < 10; j++) {
             // 创建元素
-            var dl = document.createElement('dl');
-            var dt = document.createElement('dt');
-            var dd = document.createElement('dd');
-            var ul = document.createElement('ul');
-
-            // 插入元素
-            dl.appendChild(dt);
-            dl.appendChild(dd);
-            dd.appendChild(ul);
-
-            // 内容写入
-            dt.innerHTML = `
-            <dt class="item-top">
-                <div class="top-pic"><img src="${listDatas[i].imgUrl}" alt=""></div>
-                <h4><a href="#">${listDatas[i].listName}</a> </h4>
-                <div class="list-btn">
-                    <a href="#" class="list-play"></a>&nbsp;&nbsp;
-                    <a href="#" class="list-col"></a>
-                </div>
-            </dt>`;
-
-            // 内层循环 控制榜单列表歌曲    
-            for (var j = 0; j < listDatas[i].songName.length; j++) {
-                // 创建元素
-                var li = document.createElement('li');
-                // 写入内容
-                li.innerHTML = `
-            <span class="num1">${j+1}</span>
-            <a href="javascript:;">${listDatas[i].songName[j]}</a>
-            <audio src="https://music.163.com/song/media/outer/url?id=${listDatas[i].songId[j]}"></audio>
-            `;
+            var li = document.createElement('li');
+            // 写入内容
+            li.innerHTML = `
+                <span class="num1">${j+1}</span>
+                <a href="javascript:;">${listArr[i].tracks[j].name}</a>
+                <audio src="https://music.163.com/song/media/outer/url?id=${listArr[i].tracks[j].id}"></audio>
+                `
                 // 插入元素
-                ul.appendChild(li);
+            ul.appendChild(li);
 
-                // 不同行背景色不一样
-                if (j % 2 == 0) {
-                    li.style.backgroundColor = '#e8e8e8'
-                } else {
-                    li.style.backgroundColor = '#f4f4f4'
-                };
+            // 不同行背景色不一样
+            if (j % 2 == 0) {
+                li.style.backgroundColor = '#e8e8e8'
+            } else {
+                li.style.backgroundColor = '#f4f4f4'
+            };
 
-                // 获取元素
+            /*       // 获取元素                                     
                 var audio = document.querySelector('audio');
                 // 给小li绑定点击事件
                 ul.onclick = function(e) {
@@ -470,55 +423,22 @@ window.addEventListener('load', function() {
                         e.target.nextElementSibling.pause();
                     }
 
-                }
+                } */
 
-            }
-
-            // 创建元素
-            var sdd = document.createElement('dd');
-            // 写入内容
-            sdd.innerHTML = `
-                <dd class="list-more"><a href="#"> 查看全部></a></dd>
-                `;
-            // 插入元素
-            dl.appendChild(sdd);
-
-            // 把最终全部内容dl整合插入listCon种
-            listCon.appendChild(dl);
         }
-    })();
+
+        // 创建元素
+        var sdd = document.createElement('dd');
+        // 写入内容
+        sdd.innerHTML = `
+                    <dd class="list-more"><a href="#"> 查看全部></a></dd>
+                    `
+            // 插入元素
+        dl.appendChild(sdd);
+
+        // 把最终全部内容dl整合插入listCon种
+        listCon.appendChild(dl);
+    }
 
 
-
-
-    // 新碟上架
-
-    /*  // 歌曲播放
-     //最新音乐部分使用数据获取
-     let $newList = $('ol#newList')
-         // 创建查询
-     var query = new AV.Query('Song');
-     // query.startsWith('contain', 'true');
-     query.find().then(function(results) {
-         for (var i = 0; i < results.length; i++) {
-             let song = results[i].attributes
-             let li = `   
-              <h3>${song.name}
-                 <span>${song.reMark}</span>
-              </h3>
-              <p>
-                 <svg class="icon icon-sq">
-                   <use xlink:href="#icon-sq"></use>
-                 </svg>
-                 ${song.singer} - ${song.album}
-               </p>
-                 <a class="play-button" href="#">
-                     <svg class="icon icon-play">
-                         <use xlink:href="#icon-play"></use>
-                     </svg>
-                 </a>
-             `
-             $newList.append(li)
-         }
-     }, function(error) {}); */
 })
