@@ -9,6 +9,16 @@ window.addEventListener('load', function() {
         search.placeholder = '音乐/视频/电台/用户';
     }
 
+    /*     search.keyup = function() {
+            console.log(search.value);
+
+            ajaxFunc('get', "http://musicapi.leanapp.cn/search", function(response) {
+                jsonObj = JSON.parse(response);
+                console.log(jsonObj);
+            }, true, 'keywords=' + search.value)
+        } */
+
+
     /* 用户名显示 */
 
     // 获取元素
@@ -20,7 +30,6 @@ window.addEventListener('load', function() {
     var userName = theme.slice(1);
     // 分割字符串
     var uArr = userName.split('|');
-    // console.log(uArr[2]);
 
 
     // alert(window.location.search)
@@ -39,20 +48,10 @@ window.addEventListener('load', function() {
     //  alert(theme);
 
 
-    // 发送ajax请求
-
-    /*     console.log(userPic.children[1]);
-        let http = new XMLHttpRequest()
-            // http.withCredentials = true 部分请求或许需要该配置，具体请先查看文档
-        http.onreadystatechange = function() {
-            if (http.readyState === 4 && http.status === 200) {
-                console.log(JSON.parse(http.responseText));
-
-            }
-        }
-        http.open("GET", 'http://musicapi.leanapp.cn/playlist/catlist', true);
-        http.send(); */
-
+    ajaxFunc('get', "http://musicapi.leanapp.cn/user/playlist", function(response) {
+        jsonObj = JSON.parse(response);
+        console.log(jsonObj);
+    }, true, 'uid=' + uArr[2])
 
 
 
@@ -82,6 +81,7 @@ window.addEventListener('load', function() {
         var li = document.createElement('li');
         // 给小li设置属性
         li.setAttribute('index', i);
+
         // 插入小li
         ol.appendChild(li);
         // 给小圆圈绑定点击事件
@@ -97,7 +97,6 @@ window.addEventListener('load', function() {
             animate(ul, -index * conWidth)
 
         })
-
     }
     ol.children[0].className = 'current';
 
@@ -151,7 +150,7 @@ window.addEventListener('load', function() {
         clearInterval(timer);
         // 清除定时器变量
         timer = null;
-    })
+    });
     slideshow.addEventListener('mouseleave', function() {
         timer = setInterval(function() {
             arrow_r.click();
@@ -172,86 +171,123 @@ window.addEventListener('load', function() {
 
     /* js动态写入热门推荐模块 */
 
-    // 模拟数据
-    hotDatas = ['『睡前故事』闭眼倾听 沉入恬静梦乡',
-        '『电台节目』《Melody》Cover：青春二',
-        '『电台节目』玺(Cover:葛冬棋)',
-        '一股情感的循环 ❤ 中文丧',
-        '一股情感的循环 ❤ 中文丧',
-        '一股情感的循环 ❤ 中文丧',
-        '一股情感的循环 ❤ 中文丧',
-        '一股情感的循环 ❤ 中文丧'
-    ]
+    var nArr = []; // 存储数据
 
-    // 获取元素
-    var hotCon = document.querySelector('.hot-con');
+    // 发送ajax请求
 
-    // 循环写入
-    for (var i = 0; i < hotDatas.length; i++) {
-        var hotContent = `
-        <div class="hot-rec-pic">
-            <a class="pic" href="#"><img src="images/hot-rec${i+1}.jpg" alt=""></a>
-            <div class="bottom">
-                <span> 67万</span>
-                <a href="#"><img src="images/play.png" alt=""></a>
-            </div>
-        </div>
-        <p>
-            <a href="#">${hotDatas[i]}</a>
-        </p>
-        `
-            // 创建元素
-        var li = document.createElement('li');
-        // 写入
-        hotCon.appendChild(li);
-        // 插入元素
-        li.innerHTML = hotContent;
-    }
+    ajaxFunc('get', "http://musicapi.leanapp.cn/personalized/djprogram", function(response) {
+        jsonObj = JSON.parse(response);
+        console.log(jsonObj);
+        nObj1 = jsonObj.result;
+
+        ajaxFunc('get', "http://musicapi.leanapp.cn/personalized", function(response) {
+            jsonObj = JSON.parse(response);
+            // console.log(jsonObj);
+            nObj2 = jsonObj.result;
+            //console.log(jsonObj);
+
+            // 数据赋值
+            nArr[3] = nObj1[0];
+            nArr[5] = nObj1[1];
+            nArr[7] = nObj1[2];
+            nArr[0] = nObj2[0];
+            nArr[1] = nObj2[1];
+            nArr[2] = nObj2[2];
+            nArr[4] = nObj2[3];
+            nArr[6] = nObj2[4];
+            // console.log(nArr[3]);
+
+            // 数据写入
+            (function() {
+                // 获取元素
+                var hotCon = document.querySelector('.hot-con');
+
+                // 循环写入
+                for (var i = 0; i < nArr.length; i++) {
+                    var hotContent = `
+                    <div class="hot-rec-pic">
+                        <a class="pic" href="#"><img src="${nArr[i].picUrl}" alt=""></a>
+                        <div class="bottom">
+                            <span> 67万</span>
+                            <a href="#"><img src="images/play.png" alt=""></a>
+                        </div>
+                    </div>
+                    <p>
+                        <a href="#">${nArr[i].name}</a>
+                    </p>
+                    <audio src="https://music.163.com/song/media/outer/url?id=${nArr[i].id}.mp3"></audio>
+                    `
+                        // 创建元素
+                    var li = document.createElement('li');
+                    // 写入
+                    hotCon.appendChild(li);
+                    // 插入元素
+                    li.innerHTML = hotContent;
+                }
+            })();
+
+        }, true)
+    }, true)
+
+
+
 
     /* js动态写入新碟上架模块 */
 
-    // 数据模拟
-    var newDatas = [{
-            songName: '新世界NEW WORLD',
-            singerName: '华晨宇'
-        },
-        {
-            songName: '我们的乐队 第6期',
-            singerName: '我们的乐队'
-        },
-        {
-            songName: '煎熬',
-            singerName: '尹毓恪'
-        },
-        {
-            songName: 'LOOK',
-            singerName: 'Apink'
-        }
-    ];
-    console.log(newDatas);
+    ajaxFunc('get', "http://musicapi.leanapp.cn/personalized/newsong", function(response) {
+        jsonObj = JSON.parse(response);
+        // console.log(jsonObj);
+        newDatas = jsonObj.result
 
 
-    // 获取元素
-    var newSlide = document.querySelector('.new-slide');
-    // 创建元素
-    var nUl = newSlide.querySelector('ul');
+        // 获取元素
+        var newSlide = document.querySelector('.new-slide');
+        // 创建元素
+        var nUl = newSlide.querySelector('ul');
 
-    // 写入
-    for (var i = 0; i < newDatas.length; i++) {
-        var newCon = `
-            <div class="new-pic">
-                <a href="#"><img src="http://p2.music.126.net/j1hivOS4I4ZKjODGF8zaIw==/109951164983520575.jpg" alt=""></a>
-            </div>
-            <p> <a href="#">${newDatas[i].songName }</a></p>
-            <span><a href="#"> ${newDatas[i]['singerName']}</a></span>                            
-            `
-            // 创建元素
-        var li = document.createElement('li');
-        // 插入元素
-        nUl.appendChild(li);
         // 写入
-        li.innerHTML = newCon;
-    }
+        for (var i = 0; i < 4; i++) {
+            var newCon = `
+            <div class="new-pic">
+                <a href="javascript:;"><img src="${newDatas[i].picUrl }" alt=""></a>
+            </div>
+            <p> <a href="#">${newDatas[i].name }</a></p>
+            <span><a href="#"> ${newDatas[i].song.artists[0].name}</a></span>
+            <audio src="https://music.163.com/song/media/outer/url?id=${newDatas[i].id}.mp3"></audio>                            
+            `
+                // 创建元素
+            var li = document.createElement('li');
+            // 插入元素
+            nUl.appendChild(li);
+            // 写入
+            li.innerHTML = newCon;
+        }
+
+        var audio = document.querySelectorAll('audio');
+        var newPic = document.querySelectorAll('new-pic');
+        var before = document.querySelectorAll(newPic, ":before");
+        // console.log(before);
+
+
+        for (var j = 0; j < nUl.children.length; j++) {
+            nUl.children[j].onclick = function() {
+                for (var k = 0; k < nUl.children.length; k++) {
+                    nUl.children[k].lastElementChild.pause();
+                }
+                if (this.lastElementChild.paused) {
+                    this.lastElementChild.play();
+                    console.log(this.lastElementChild);
+                } else {
+                    console.log(888);
+                    this.lastElementChild.pause();
+                    console.log(this.lastElementChild);
+
+                }
+            }
+        }
+
+    }, true)
+
 
     /* 入驻歌手动态写入 */
 
@@ -275,6 +311,7 @@ window.addEventListener('load', function() {
         // 插入元素
         singer_Con.appendChild(li);
     }
+
 
     /* 动态写入主播模块 */
 
@@ -300,7 +337,6 @@ window.addEventListener('load', function() {
             id: '独立DJ，CRI环球旅游广播特邀DJ'
         },
     ];
-    console.log(auchorDatas);
 
 
     // 获取元素
@@ -331,114 +367,147 @@ window.addEventListener('load', function() {
     // 发送ajax请求
     ajaxFunc('Get', "http://musicapi.leanapp.cn/top/list", function(response) {
         jsonObj = JSON.parse(response);
-        // console.log(jsonObj);
         var listObj1 = jsonObj.playlist;
         listArr.push(listObj1)
-        return listObj;
+
+        ajaxFunc('Get', "http://musicapi.leanapp.cn/top/list", function(response) {
+            jsonObj = JSON.parse(response);
+            var listObj2 = jsonObj.playlist;
+            listArr.push(listObj2)
+
+            ajaxFunc('Get', "http://musicapi.leanapp.cn/top/list", function(response) {
+                jsonObj = JSON.parse(response);
+                // console.log(jsonObj);
+                var listObj3 = jsonObj.playlist;
+                listArr.push(listObj3);
+
+                (function() {
+                    // 获取元素
+                    var listCon = document.querySelector('.list-con');
+
+                    // 外层循环 控制不同榜单
+                    for (var i = 0; i < listArr.length; i++) {
+
+                        // 创建元素
+                        var dl = document.createElement('dl');
+                        var dt = document.createElement('dt');
+                        var dd = document.createElement('dd');
+                        var ul = document.createElement('ul');
+
+                        // 插入元素
+                        dl.appendChild(dt);
+                        dl.appendChild(dd);
+                        dd.appendChild(ul);
+
+                        // 内容写入
+                        dt.innerHTML = `
+                         <dt class="item-top">
+                             <div class="top-pic"><img src="${listArr[i].coverImgUrl}" alt=""></div>
+                             <h4><a href="#">${listArr[i].name}</a> </h4>
+                             <div class="list-btn">
+                                 <a href="#" class="list-play"></a>&nbsp;&nbsp;
+                                 <a href="#" class="list-col"></a>
+                             </div>
+                         </dt>`;
+
+                        // 内层循环 控制榜单列表歌曲    
+                        for (var j = 0; j < 10; j++) {
+                            // 创建元素
+                            var li = document.createElement('li');
+                            // 写入内容
+                            li.innerHTML = `
+                                <span class="num1">${j+1}</span>
+                                <a href="javascript:;" class="song">${listArr[i].tracks[j].name}</a>
+                                <div class="listBtn">
+                                    <a href="javascript:;" title="播放" class="s-bt"></a>
+                                    <a href="javascript:;" title="收藏" class="s-col"></a>
+                                </div>
+                                <audio src="https://music.163.com/song/media/outer/url?id=${listArr[i].tracks[j].id}.mp3"></audio>
+                                `
+                                // 插入元素
+                            ul.appendChild(li);
+                            // 给ul设置属性
+                            ul.setAttribute('dataSet', i)
+
+                            console.log(ul.getAttribute('dataSet'));
+
+                            // 不同行背景色不一样
+                            if (j % 2 == 0) {
+                                li.style.backgroundColor = '#e8e8e8'
+                            } else {
+                                li.style.backgroundColor = '#f4f4f4'
+                            };
+
+                        }
+                        // 创建元素
+                        var sdd = document.createElement('dd');
+                        // 写入内容
+                        sdd.innerHTML = `
+                             <dd class="list-more"><a href="#"> 查看全部></a></dd>
+                             `
+                            // 插入元素
+                        dl.appendChild(sdd);
+
+                        // 把最终全部内容dl整合插入listCon种
+                        listCon.appendChild(dl);
+                    }
+
+
+                    var ul = document.querySelectorAll("ul[dataSet]");
+                    // console.log(ul);
+                    // console.log(ul.length);
+
+                    for (var j = 0; j < 3; j++) {
+                        changeSong(j)
+                    }
+
+                    function changeSong(k) {
+
+                        ul[k].onclick = function(e) {
+                            // console.dir(e.target);
+                            if (e.target.className = "s-bt") {
+                                console.log(ul[k]);
+                                //先全部歌曲恢复原状
+                                for (var h = 0; h < ul[k].children.length; h++) {
+                                    ul[k].children[h].lastElementChild.pause(); // 所有歌暂停播放
+                                    ul[k].children[h].children[1].style.color = '#333333';
+                                    ul[k].children[h].children[2].firstElementChild.innerHTML = ''
+                                    ul[k].children[h].children[2].firstElementChild.title = '播放'
+                                }
+                                // console.log(e.target.parentNode);
+                                if (e.target.parentNode.nextElementSibling.paused) {
+                                    e.target.parentNode.nextElementSibling.play();
+                                    e.target.parentNode.previousElementSibling.style.color = '#c44869'
+                                    e.target.innerHTML = '';
+                                    e.target.title = '暂停';
+                                    //e.target.parentNode.previousElementSibling.style.width = '124px'
+                                    console.log(e.target.parentNode.parentNode);
+
+                                    //e.target.parentNode.style.display = 'block'
+
+                                } else {
+                                    e.target.parentNode.nextElementSibling.pause()
+                                    e.target.parentNode.previousElementSibling.style.color = '#333333'
+                                    e.target.innerHTML = ''
+                                    e.target.title = '播放'
+                                        //e.target.parentNode.previousElementSibling.style.width = '180px'
+                                        //e.target.parentNode.style.display = 'none'
+                                }
+                            }
+                        }
+                    }
+
+
+                })()
+            }, true, 'idx=2')
+        }, true, 'idx=0')
     }, true, 'idx=3')
-    ajaxFunc('Get', "http://musicapi.leanapp.cn/top/list", function(response) {
-        jsonObj = JSON.parse(response);
-        // console.log(jsonObj);
-        var listObj2 = jsonObj.playlist;
-        listArr.push(listObj2)
-        return listObj;
-    }, true, 'idx=0')
-    ajaxFunc('Get', "http://musicapi.leanapp.cn/top/list", function(response) {
-        jsonObj = JSON.parse(response);
-        // console.log(jsonObj);
-        var listObj3 = jsonObj.playlist;
-        listArr.push(listObj3)
-        return listObj;
-    }, true, 'idx=2')
-    console.log(listArr);
-    console.log(listArr.length);
 
 
 
-    // 获取元素
-    var listCon = document.querySelector('.list-con');
+    console.log(hello);
 
-    // 外层循环 控制不同榜单
 
-    for (var i = 0; i < 3; i++) {
-        alert(888)
-
-        // 创建元素
-        var dl = document.createElement('dl');
-        var dt = document.createElement('dt');
-        var dd = document.createElement('dd');
-        var ul = document.createElement('ul');
-
-        // 插入元素
-        dl.appendChild(dt);
-        dl.appendChild(dd);
-        dd.appendChild(ul);
-
-        // 内容写入
-        dt.innerHTML = `
-                <dt class="item-top">
-                    <div class="top-pic"><img src="${listArr[i].coverImgUrl}" alt=""></div>
-                    <h4><a href="#">${listArr[i].name}</a> </h4>
-                    <div class="list-btn">
-                        <a href="#" class="list-play"></a>&nbsp;&nbsp;
-                        <a href="#" class="list-col"></a>
-                    </div>
-                </dt>`;
-
-        // 内层循环 控制榜单列表歌曲    
-        for (var j = 0; j < 10; j++) {
-            // 创建元素
-            var li = document.createElement('li');
-            // 写入内容
-            li.innerHTML = `
-                <span class="num1">${j+1}</span>
-                <a href="javascript:;">${listArr[i].tracks[j].name}</a>
-                <audio src="https://music.163.com/song/media/outer/url?id=${listArr[i].tracks[j].id}"></audio>
-                `
-                // 插入元素
-            ul.appendChild(li);
-
-            // 不同行背景色不一样
-            if (j % 2 == 0) {
-                li.style.backgroundColor = '#e8e8e8'
-            } else {
-                li.style.backgroundColor = '#f4f4f4'
-            };
-
-            /*       // 获取元素                                     
-                var audio = document.querySelector('audio');
-                // 给小li绑定点击事件
-                ul.onclick = function(e) {
-
-                    console.log(li.children[2]);
-                    for (var k = 0; k < ul.children.length; k++) {
-                        ul.children[k].children[2].pause();
-                    }
-
-                    // console.log(e.target);
-                    if (e.target.nextElementSibling.paused) {
-                        e.target.nextElementSibling.play();
-
-                    } else {
-                        e.target.nextElementSibling.pause();
-                    }
-
-                } */
-
-        }
-
-        // 创建元素
-        var sdd = document.createElement('dd');
-        // 写入内容
-        sdd.innerHTML = `
-                    <dd class="list-more"><a href="#"> 查看全部></a></dd>
-                    `
-            // 插入元素
-        dl.appendChild(sdd);
-
-        // 把最终全部内容dl整合插入listCon种
-        listCon.appendChild(dl);
-    }
 
 
 })

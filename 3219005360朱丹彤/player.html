@@ -104,17 +104,18 @@
     }
     /* 控制音量 */
     
-    .myplayer .volume {
+    .myplayer .volumeA {
         margin-top: 20px;
     }
     
-    .myplayer .volume .vol-btn {
+    .myplayer .volumeA .vol-btn {
         float: left;
         font: 20px 'icomoon';
         cursor: pointer;
     }
     
-    .myplayer .volume .volume-col {
+    .myplayer .volumeA .volume-col {
+        position: relative;
         float: left;
         width: 260px;
         height: 4px;
@@ -124,20 +125,24 @@
         cursor: pointer;
     }
     
-    .myplayer .volume .volumebar {
-        width: 20px;
+    .myplayer .volumeA .volume-col .volumebar {
+        width: 50%;
         height: 4px;
         border-radius: 2px;
         background: #a3b3ce;
+        transition: .2s;
     }
     
-    .myplayer .volume .volumebar .volumearc {
+    .myplayer .volumeA .volume-col .volumearc {
+        position: absolute;
+        top: -3px;
+        left: 50%;
         display: block;
         width: 8px;
         height: 8px;
         border-radius: 50%;
         background: #ffffff;
-        transform: translate(19px, -2px);
+        transition: .2s;
     }
 </style>
 
@@ -156,12 +161,12 @@
         <h4 class="song-name"></h4>
         <h4 class="singer"></h4>
         <!-- 控制音量 -->
-        <div class="volume">
+        <div class="volumeA">
             <span class="vol-btn"></span>
             <div class="volume-col">
                 <div class="volumebar">
-                    <span class="volumearc"></span>
                 </div>
+                <span class="volumearc"></span>
             </div>
         </div>
     </div>
@@ -181,7 +186,8 @@
 
     var like = document.querySelector('.like'); // 获取收藏标签
 
-    var volume = document.querySelector('.volume');
+    var volumeCol = document.querySelector('.volume-col');
+    var volBtn = document.querySelector('.vol-btn');
     var volumeBar = document.querySelector('.volumebar');
     var volumeArc = document.querySelector('.volumearc');
 
@@ -203,23 +209,50 @@
             like.onmouseover = function() {
                 this.style.color = '#6f56bf'
             }
+            like.onmouseout = function() {
+                this.style.color = '#acb8cc'
+            }
         }
     }
 
     /* 播放图标的改变以及歌曲播放 */
     play.onclick = function() {
-        if (flag) {
+        if (myMusic.paused) {
             myMusic.play();
             play.innerHTML = '';
             a.title = '暂停';
-            flag = false;
         } else {
             myMusic.pause();
             play.innerHTML = '';
             a.title = '播放';
-            flag = true;
         }
     }
+
+    // 控制是否静音
+    var fl = true;
+    volBtn.onclick = function() {
+        if (fl) {
+            myMusic.muted = true;
+            volBtn.innerHTML = '';
+            fl = false;
+        } else {
+            myMusic.muted = false;
+            volBtn.innerHTML = '';
+            fl = true;
+        }
+    }
+
+    /* 音量条事件 */
+    volumeCol.onclick = function(e) {
+        setVol(e)
+    }
+
+    volumeCol.addEventListener("mousedown", function(e) {
+        volumeCol.addEventListener("mousemove", setVol);
+    });
+    volumeCol.addEventListener("mouseup", function(e) {
+        volumeCol.removeEventListener("mousemove", setVol);
+    });
 
     /* 歌曲切换 */
     // 下一首
@@ -233,6 +266,11 @@
         getMusic(i);
     }
 
+    // 播放完毕后自动播放下一首
+    myMusic.addEventListener("ended", function() {
+        nextBtn.click();
+    });
+
     /* 获取音乐 */
     function getMusic(i) {
         ajaxFunc('get', "http://musicapi.leanapp.cn/playlist/detail", function(response) {
@@ -242,11 +280,14 @@
             songName.innerHTML = songObj.name;
             singer.innerHTML = songObj.ar[0].name;
             img.src = songObj.al.picUrl;
-            myMusic.src = "https://music.163.com/song/media/outer/url?id=" + songObj.id + ".mp3"
+            myMusic.src = "https://music.163.com/song/media/outer/url?id=" + songObj.id + ".mp3";
+            // 设置最初音量
+            myMusic.volume = Math.round(volumeBar.offsetWidth / volumeCol.offsetWidth * 100) / 100;
+            // console.log(myMusic.volume);
 
             // 让下一首歌曲状态（是否播放）与上一首一致
             if (flag) {
-                myMusic.parse()
+                myMusic.pause()
             } else {
                 myMusic.play()
             }
@@ -254,22 +295,28 @@
         }, true, "id=24381616")
     }
 
-    /*     let http = new XMLHttpRequest()
-            // http.withCredentials = true 部分请求或许需要该配置，具体请先查看文档
-        http.onreadystatechange = function() {
-            if (http.readyState === 4 && http.status === 200) {
-                console.log(JSON.parse(http.responseText));
-                //var datas = JSON.parse(http.responseText).account
-                //console.log(datas.id);
-                var code = JSON.parse(http.responseText).code;
-                // 获取用户有关信息
-                var datas = JSON.parse(http.responseText).profile;
-                console.log(datas.userId);
+    /* 音量条函数 */
+    function setVol(e) {
+        var x = e.offsetX; // 获取鼠标在绑定盒子中当前的位置
+        // console.log(e.pageX);
+        // console.log(volumeCol.offsetLeft);
+        // console.log(e.offsetX);
+        // console.log(x);
+        var per = Math.floor(x / volumeCol.offsetWidth * 100); // 获取百分比
+        // console.log(volumeCol.offsetWidth);
+        volumeArc.style.left = per + '%';
+        volumeBar.style.width = per + '%';
+        // console.log(volumeArc.style.left);
 
-            }
+        myMusic.volume = per / 100;
+
+        // 音量条为0时显示静音
+        if (per == 0) {
+            volBtn.innerHTML = '';
+        } else {
+            volBtn.innerHTML = '';
         }
-        http.open("GET", `http://musicapi.leanapp.cn/login/cellphone?phone=19924681039&password=18823935429abcd`, true);
-        http.send(); */
+    }
 </script>
 
 </html>
