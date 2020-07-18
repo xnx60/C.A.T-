@@ -265,23 +265,24 @@ window.addEventListener('load', function() {
 
         var audio = document.querySelectorAll('audio');
         var newPic = document.querySelectorAll('new-pic');
-        var before = document.querySelectorAll(newPic, ":before");
+        //var before = document.querySelectorAll(newPic, ":before");
         // console.log(before);
 
 
         for (var j = 0; j < nUl.children.length; j++) {
             nUl.children[j].onclick = function() {
-                for (var k = 0; k < nUl.children.length; k++) {
-                    nUl.children[k].lastElementChild.pause();
-                }
-                if (this.lastElementChild.paused) {
-                    this.lastElementChild.play();
-                    console.log(this.lastElementChild);
-                } else {
-                    console.log(888);
+                // for (var k = 0; k < nUl.children.length; k++) {
+                //     nUl.children[k].lastElementChild.pause();
+                // }
+                if (this.lastElementChild.classList.contains('aPlay')) {
                     this.lastElementChild.pause();
-                    console.log(this.lastElementChild);
-
+                    this.lastElementChild.classList.remove('aPlay');
+                    // console.log(this.lastElementChild);
+                } else {
+                    // console.log(888);
+                    this.lastElementChild.play();
+                    this.lastElementChild.classList.add('aPlay');
+                    // console.log(this.lastElementChild);
                 }
             }
         }
@@ -503,9 +504,6 @@ window.addEventListener('load', function() {
         }, true, 'idx=0')
     }, true, 'idx=3')
 
-
-
-    console.log(hello);
 
 
 
